@@ -16,6 +16,7 @@ import { EVENT_CODE_REQUEST, CodeRequestSchema, CodeResponseSchema, OTPItemInfo,
     SettingUpdateRequestSchema,
     EVENT_UPDATE_PASSWORD,
     PasswordUpdateRequestSchema,
+    MasterKeyInfo,
     } from '../common/schema'
 import { arrayRearrange, shallowCopy } from '../common/utils';
 import { PREF_KEY_SECRETS, PREF_KEY_SETTINGS, PREF_MASTER_KEY } from '../common/conts';
@@ -26,7 +27,8 @@ const AIGIS_PREF_NAME = 'aigis-pref';
 
 interface SecretSchema {
     keyAlias: string,
-    secret: string
+    secret: string,
+    encrypted?: boolean,
 }
 
 class PreferencesManager {
@@ -233,8 +235,8 @@ export default class EntryAbility extends UIAbility {
         }
 
         // try to load master key
-        const masterKey = pref.getSync(PREF_MASTER_KEY, {}) as string;
-
+        const masterKeyInfo = pref.getSync(PREF_MASTER_KEY, {}) as MasterKeyInfo;
+        AppStorage.setAndProp('MasterKeyInfo', masterKeyInfo);
     }
 
     private registerEventHubHandlers() {
@@ -289,7 +291,6 @@ export default class EntryAbility extends UIAbility {
         });
         this.context.eventHub.on(EVENT_UPDATE_PASSWORD, (data: PasswordUpdateRequestSchema) => {
             if (this.dataPreferences) {
-                //
                 data.password;
                 //
                 this.dataPreferences?.putSync(PREF_MASTER_KEY, {});

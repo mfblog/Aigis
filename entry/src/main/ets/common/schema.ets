@@ -61,8 +61,10 @@ export interface OTPItemInfo {
     schema: OTPSchema,
 }
 
-export interface MasterKey {
+export interface MasterKeyInfo {
     type: 'PBKDF2',
-    nonce: string,
+    keyAlias: string,
+    secret: Uint8Array,
+    salt: Uint8Array,
     iteration: number,
 }
